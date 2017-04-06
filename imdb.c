@@ -2,7 +2,7 @@
 
    Main program for interactive IMDB viewer.
 
-   Name:
+   Name: Sarah Depew
    Resources used (websites / peers / etc):
 */
 

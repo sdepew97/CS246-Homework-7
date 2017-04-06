@@ -1,6 +1,6 @@
 /* imdb_functions.c
 
-   Name:
+   Name: Sarah Depew
    Resources used (websites / peers / etc):
 */
 
@@ -9,6 +9,7 @@
 #include <string.h>
 
 #include "imdb_functions.h"
+#include "types.h"
 
 #define STRING_SIZE  200
 #define LEN "199"
@@ -84,9 +85,43 @@ read_result read_cast_member(FILE* file, cast_member* member, map all_movies)
 // Note: You are responsible for freeing the returned array.
 array merge_arrays(array src1, array src2)
 {
-  // WRITE CODE HERE
+  //array in which I will store the merged values
+  array merged = array_new();
+  int index_1=0, index_2=0, index_merged=0; 
 
-  return NULL; // <-- REMOVE ME
+  while(index_1<array_size(src1) && index_2<array_size(src2)){
+    //first element is smaller than second element, first element into merged array
+    if(strcmp((array_get(src1,index_1)->name),(array_get(src2,index_2)->name))<0){ 
+      array_add_at(merged,index_merged,array_get(src1,index_1));
+      index_1++;
+      index_merged++; 
+    }
+    
+    //elements are either equal or second is greater than first, put second in merged array
+    else{  
+      array_add_at(merged,index_merged,array_get(src2,index_2));
+      index_2++;
+      index_merged++; 
+    }
+  }
+
+  //there are still (sorted) elements in the first array that should all be transfered to merged
+  if(index_1<array_size(src1)){
+    for(;index_1<array_size(src1);index_1++,index_merged++){
+      array_add_at(merged,index_merged,array_get(src1,index_1));
+    }
+  }
+
+  //there are still (sorted) elements in the second array that should all be transfered to merged
+  if(index_2<array_size(src2)){
+    for(;index_2<array_size(src2);index_2++,index_merged++){
+      array_add_at(merged,index_merged,array_get(src2,index_2));
+    }
+  }
+  
+  else{} //do nothing, since merged is filled and input arrays were both the same size
+  
+  return merged; 
 }
 
 // Finds a cast member in a sorted array of cast members
@@ -96,7 +131,21 @@ array merge_arrays(array src1, array src2)
 //                 Otherwise, returns NULL.
 cast_member* find_cast_member(array cast, char* name)
 {
-  // WRITE CODE HERE
+  int low=0, high=array_size(cast)-1, midpoint=(low+high)/2;
 
-  return NULL;
+  while(low<high){
+    midpoint=(low+high)/2; 
+     if(strcmp((array_get(cast,midpoint)->name),name)==0){
+      return array_get(cast,midpoint); 
+    }
+
+    else if(strcmp((array_get(cast,midpoint)->name), name)<0){
+      low=midpoint+1; 
+    }
+    else{
+      high=midpoint-1; 
+    } 
+  }
+  
+  return NULL; 
 }
