@@ -106,6 +106,8 @@ int main(int argc, char** argv)
     // and all_cast has all previous cast members.
     // You need to merge (with a call to merge_arrays) these two arrays, producing
     // a new all_cast that contains both.
+    
+    all_cast = merge_arrays(all_cast, some_cast); 
   }
 
   for(;;)

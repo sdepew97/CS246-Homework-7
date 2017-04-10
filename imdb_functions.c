@@ -55,6 +55,10 @@ read_result read_cast_member(FILE* file, cast_member* member, map all_movies)
   // At this point, `buf` contains the name of the cast member, and you can
   // fill in the two data fields of *member.
 
+  member->name = buf; //fills the name part of the cast member struct
+  member->members = llist_new(); //creates an empty llist to fill with movies 
+  
+  //start reading in all the movies
   while(fscanf(file, "%*[\t]%" LEN "[^\n]", buf) == 1)
   {
     getc(file); // eat the newline
@@ -72,8 +76,29 @@ read_result read_cast_member(FILE* file, cast_member* member, map all_movies)
     //   2. If not, create (malloc) a new movie object and add it to the map.
     //   3. Update the movie to include the cast member.
     //   4. Update the cast member to include the movie.
+    
+    movie *current_movie = map_get(all_movies, buf);
+    
+    //the movie is not yet contained in the map
+    if(current_movie == NULL){
+      	//create the movie and fill the fields
+    	movie *new_movie = malloc(sizeof(movie));
+    	new_movie->name = buf; 
+    	new_movie->cast = array_new(); 
+    	 
+    	//add it to the map
+    	map_put(all_movies, buf, new_movie);
+    	
+    	//update current_movie
+    	current_movie = new_movie; 
+    }
+    
+    //Update the movie to contain the cast member
+    array_add(current_movie->cast, member); 
+    
+    //Update the cast member to include the movie
+    llist_add(member->movies, current_movie);
   }
-
   return SUCCESS;
 }
 
