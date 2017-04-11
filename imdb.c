@@ -142,12 +142,13 @@ int main(int argc, char** argv)
     
     //if this person is in the list, then return movies that they were in
     if(target_person!=NULL){
-      /*
+      //get the head of the llist of movies for the person found
+      llist_node *head = llist_head(target_person->movies);
+      
       //print all the movies they have been in
-      for(int i=0; i<llist_size(target_person->movies); i++){
-      	printf(
+      for(int i=0; i<llist_size(target_person->movies)&&head!=NULL; i++, head=head->next){
+      	printf("%s", head->data->name);  
       }
-      */
       //printf("Congratulations, you found a person!\n"); 
     }
     else{
