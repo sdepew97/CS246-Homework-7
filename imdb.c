@@ -16,9 +16,13 @@
 
 #include "imdb_functions.h"
 
+<<<<<<< HEAD
 #define LEN 199
 
 // the IMDB files contain 239 header lines
+=======
+// the IMDB files contain at most 241 header lines
+>>>>>>> 3b493a1b74fee22736f931f914ceb51f2d11e21a
 #define HEADER_LINES 241
 
 // Reads in a file containing a list of cast members

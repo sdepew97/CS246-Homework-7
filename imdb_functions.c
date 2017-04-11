@@ -96,6 +96,9 @@ read_result read_cast_member(FILE* file, cast_member* member, map all_movies)
     return FAILURE;
   }
 
+  // non-ascii chars are alphabetized differently, so we can't handle them here
+  if(any_bad_chars(buf)) return FAILURE;
+
   // WRITE CODE HERE
   // At this point, `buf` contains the name of the cast member, and you can
   // fill in the two data fields of *member. 
