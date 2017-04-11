@@ -1,7 +1,7 @@
 /* imdb_functions.c
 
    Name: Sarah Depew
-   Resources used (websites / peers / etc):
+   Resources used (websites / peers / etc): https://en.wikipedia.org/wiki/Binary_search_algorithm, TA
 */
 
 #include <stdlib.h>
@@ -47,16 +47,24 @@ bool all_dashes(char* str)
 read_result read_cast_member(FILE* file, cast_member* member, map all_movies)
 {
   char buf[STRING_SIZE];
-  if(fscanf(file, "%" LEN "[^\t\n]", buf) != 1) return FAILURE;
+  if(fscanf(file, "%" LEN "[^\t\n]", buf) != 1) 
+    return FAILURE;
 
-  if(all_dashes(buf)) return END_OF_LIST;
+  if(all_dashes(buf)) 
+    return END_OF_LIST;
 
   // WRITE CODE HERE
   // At this point, `buf` contains the name of the cast member, and you can
-  // fill in the two data fields of *member.
-
-  member->name = buf; //fills the name part of the cast member struct
-  member->members = llist_new(); //creates an empty llist to fill with movies 
+  // fill in the two data fields of *member. 
+  
+  //member->name = buf; //fills the name part of the cast member struct
+  //strcpy(member->name, buf); 
+  
+  //fills the name and movie list part of the cast member struct
+  char *name = malloc(sizeof(char)*(strlen(buf)+1)); 
+  strcpy(name, buf); 
+  member->name = name; 
+  member->movies = llist_new(); //creates an empty llist to fill with movies 
   
   //start reading in all the movies
   while(fscanf(file, "%*[\t]%" LEN "[^\n]", buf) == 1)
@@ -77,6 +85,7 @@ read_result read_cast_member(FILE* file, cast_member* member, map all_movies)
     //   3. Update the movie to include the cast member.
     //   4. Update the cast member to include the movie.
     
+    //Look up movie to see if it already exists
     movie *current_movie = map_get(all_movies, buf);
     
     //the movie is not yet contained in the map
@@ -156,15 +165,15 @@ array merge_arrays(array src1, array src2)
 //                 Otherwise, returns NULL.
 cast_member* find_cast_member(array cast, char* name)
 {
-  int low=0, high=array_size(cast)-1, midpoint=(low+high)/2;
-
-  while(low<high){
+  int low=0, high=array_size(cast)-1, midpoint;
+  
+  while(low<=high){
     midpoint=(low+high)/2; 
      if(strcmp((array_get(cast,midpoint)->name),name)==0){
       return array_get(cast,midpoint); 
     }
 
-    else if(strcmp((array_get(cast,midpoint)->name), name)<0){
+    else if(strcmp((array_get(cast,midpoint)->name),name)<0){
       low=midpoint+1; 
     }
     else{

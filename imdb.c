@@ -16,8 +16,10 @@
 
 #include "imdb_functions.h"
 
+#define LEN 199
+
 // the IMDB files contain 239 header lines
-#define HEADER_LINES 239
+#define HEADER_LINES 241
 
 // Discards all characters until the end of a line in the given file
 void skip_line(FILE* file)
@@ -61,11 +63,12 @@ array read_cast_member_file(char* filename, map all_movies)
       array_add(cast, member);
 
       // This is helpful for seeing progress as you're loading a file.
-      if(array_size(cast) % 1000 == 0)
-	printf("Added cast member %s\n", member->name);
+      if(array_size(cast) % 1000 == 0){
+        printf("Added cast member %s\n", member->name);
+      }
       
       break;
-    case FAILURE:
+    case FAILURE: 
       skip_line(file); // this makes sure we're always moving forward
       break;
       
@@ -75,6 +78,15 @@ array read_cast_member_file(char* filename, map all_movies)
   }
 
   return cast; // shouldn't get here unless file is truncated
+}
+
+void replace_new_line(char *input){
+	int i=0; 
+	
+	while(input[i]!='\n'){
+		i++; 
+	}
+	input[i] = '\0'; 	
 }
 
 // Our main program loop.
@@ -116,6 +128,39 @@ int main(int argc, char** argv)
     // This is the main interactive loop, which you must write, as described
     // in the assignment.
     // When the user is done, this should `break`.
+    
+    //get input from user 
+    //create the string that the memory is stored in 
+    char input[LEN+1] = {}; 
+    
+    //fill input array with length LEN leaving room for a null terminator
+    fgets(input, LEN, stdin);
+    
+    //function that takes in an array pointer removes the new line  
+    replace_new_line(input); 
+    
+    //The user did not enter anything (just a newline), so they are done with the program. 
+    if(input[0]=='\0'){
+    	break;
+    } 
+    
+    //look up cast member 
+    cast_member *target_person = find_cast_member(all_cast, input);
+    
+    //if this person is in the list, then return movies that they were in
+    if(target_person!=NULL){
+      
+      //print all the movies they have been in
+      for(int i=0; i<llist_size(target_person->movies); i++){
+      	printf(
+      }
+      
+      //printf("Congratulations, you found a person!\n"); 
+    }
+    else{
+      printf("I am sorry, %s was not found.\n",input); 
+      //break; 
+    }
   }
 
   // WRITE CODE HERE
