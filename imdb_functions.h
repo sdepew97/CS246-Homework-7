@@ -16,11 +16,7 @@ void skip_line(FILE* file);
 
 // like strcmp, but ignores differences in case
 int stricmp(char* s1, char* s2);
-<<<<<<< HEAD
- 
-=======
 
->>>>>>> 3b493a1b74fee22736f931f914ceb51f2d11e21a
 // reading in a cast member can have one of three results:
 typedef enum read_result {
   FAILURE,      // the cast member entry is somehow malformed

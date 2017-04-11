@@ -138,7 +138,13 @@ read_result read_cast_member(FILE* file, cast_member* member, map all_movies)
     if(current_movie == NULL){
       	//create the movie and fill the fields
     	movie *new_movie = malloc(sizeof(movie));
-    	new_movie->name = buf; 
+    	//new_movie->name = buf; 
+    	
+    	
+    	char *movie_name = malloc(sizeof(char)*(strlen(buf)+1)); 
+    	strcpy(movie_name, buf); 
+    	new_movie->name = movie_name; 
+    	 
     	new_movie->cast = array_new(); 
     	 
     	//add it to the map
@@ -171,7 +177,7 @@ array merge_arrays(array src1, array src2)
 
   while(index_1<array_size(src1) && index_2<array_size(src2)){
     //first element is smaller than second element, first element into merged array
-    if(strcmp((array_get(src1,index_1)->name),(array_get(src2,index_2)->name))<0){ 
+    if(stricmp((array_get(src1,index_1)->name),(array_get(src2,index_2)->name))<0){ 
       array_add_at(merged,index_merged,array_get(src1,index_1));
       index_1++;
       index_merged++; 
@@ -215,11 +221,11 @@ cast_member* find_cast_member(array cast, char* name)
   
   while(low<=high){
     midpoint=(low+high)/2; 
-     if(strcmp((array_get(cast,midpoint)->name),name)==0){
+     if(stricmp((array_get(cast,midpoint)->name),name)==0){
       return array_get(cast,midpoint); 
     }
 
-    else if(strcmp((array_get(cast,midpoint)->name),name)<0){
+    else if(stricmp((array_get(cast,midpoint)->name),name)<0){
       low=midpoint+1; 
     }
     else{

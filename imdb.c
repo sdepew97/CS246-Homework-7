@@ -16,13 +16,9 @@
 
 #include "imdb_functions.h"
 
-<<<<<<< HEAD
 #define LEN 199
 
-// the IMDB files contain 239 header lines
-=======
 // the IMDB files contain at most 241 header lines
->>>>>>> 3b493a1b74fee22736f931f914ceb51f2d11e21a
 #define HEADER_LINES 241
 
 // Reads in a file containing a list of cast members
@@ -48,8 +44,9 @@ array read_cast_member_file(char* filename, map all_movies)
   }
 
   array cast = array_new();
-
-  while(!feof(file))
+	//was !feof(file)
+	int i=0; 
+  while(i<200)
   {
     cast_member* member = malloc(sizeof(cast_member));
     read_result result = read_cast_member(file, member, all_movies);
@@ -60,16 +57,19 @@ array read_cast_member_file(char* filename, map all_movies)
       array_add(cast, member);
 
       // This is helpful for seeing progress as you're loading a file.
-      if(array_size(cast) % 1000 == 0){
+      //was 1000
+      if(array_size(cast) % 10 == 0){
         printf("Added cast member %s\n", member->name);
       }
-      
+      i++;
       break;
     case FAILURE: 
       skip_line(file); // this makes sure we're always moving forward
+      i++;
       break;
       
     case END_OF_LIST:
+      i++; 
       return cast;
     }
   }
@@ -137,7 +137,7 @@ int main(int argc, char** argv)
     replace_new_line(input); 
     
     //The user did not enter anything (just a newline), so they are done with the program. 
-    if(input[0]=='\0'){
+    if(input[0]=='\0'||input[0]=='q'){
     	break;
     } 
     
@@ -149,15 +149,16 @@ int main(int argc, char** argv)
       //get the head of the llist of movies for the person found
       llist_node *head = llist_head(target_person->movies);
       
+      printf("Congratulations, you found a %s!\n%s was in this(these) movie(s):\n", target_person->name,target_person->name);
+      
       //print all the movies they have been in
       for(int i=0; i<llist_size(target_person->movies)&&head!=NULL; i++, head=head->next){
-      	printf("%s", head->data->name);  
+      	printf("%s\n", head->data->name);  
       }
-      //printf("Congratulations, you found a person!\n"); 
+       
     }
     else{
-      printf("I am sorry, %s was not found.\n",input); 
-      //break; 
+      printf("I am sorry, %s was not found.\n",input);  
     }
   }
 
