@@ -3,7 +3,7 @@
    Main program for interactive IMDB viewer.
 
    Name: Sarah Depew
-   Resources used (websites / peers / etc):
+   Resources used (websites / peers / etc): https://www.cyberciti.biz/faq/linux-unix-vim-save-and-quit-command/, http://stackoverflow.com/questions/2481879/ignore-extra-spaces-when-using-fgets, http://www.cplusplus.com/reference/cstring/strcmp/, 
 */
 
 #include <stdlib.h>
@@ -44,9 +44,8 @@ array read_cast_member_file(char* filename, map all_movies)
   }
 
   array cast = array_new();
-	//was !feof(file)
-	int i=0; 
-  while(i<200)
+ 
+  while(!feof(file))
   {
     cast_member* member = malloc(sizeof(cast_member));
     read_result result = read_cast_member(file, member, all_movies);
@@ -57,19 +56,18 @@ array read_cast_member_file(char* filename, map all_movies)
       array_add(cast, member);
 
       // This is helpful for seeing progress as you're loading a file.
-      //was 1000
-      if(array_size(cast) % 10 == 0){
+      if(array_size(cast) % 100000 == 0){
         printf("Added cast member %s\n", member->name);
       }
-      i++;
+      
       break;
+      
     case FAILURE: 
       skip_line(file); // this makes sure we're always moving forward
-      i++;
       break;
       
     case END_OF_LIST:
-      i++; 
+      printf("The file is done loading.\n"); 
       return cast;
     }
   }
@@ -95,7 +93,7 @@ int main(int argc, char** argv)
     printf("Usage: %s [cast_member lists]\n", argv[0]);
     return 1;
   }
-	   
+  
   map all_movies = map_new();
   array all_cast = array_new();
 
@@ -118,7 +116,11 @@ int main(int argc, char** argv)
     
     all_cast = merge_arrays(all_cast, some_cast); 
   }
-
+  
+  //print instructions for the user on how to use this program
+  char *instruction_string = "To use this program, please enter the name of an actor/actress in Last, First form. (For example: \"Jolie, Angelina\".)\nThe program will print out a list of all the movies in which the actor/actress has started.\n"; 
+  printf("%s", instruction_string); 
+  
   for(;;)
   {
     // WRITE CODE HERE
@@ -136,10 +138,12 @@ int main(int argc, char** argv)
     //function that takes in an array pointer removes the new line  
     replace_new_line(input); 
     
-    //The user did not enter anything (just a newline), so they are done with the program. 
+    //The user did not enter anything (just a newline) or entered q, so they are done with the program. 
     if(input[0]=='\0'||input[0]=='q'){
     	break;
     } 
+    
+    printf("Searching...\n"); 
     
     //look up cast member 
     cast_member *target_person = find_cast_member(all_cast, input);
@@ -149,16 +153,19 @@ int main(int argc, char** argv)
       //get the head of the llist of movies for the person found
       llist_node *head = llist_head(target_person->movies);
       
-      printf("Congratulations, you found a %s!\n%s was in this(these) movie(s):\n", target_person->name,target_person->name);
+      printf("Congratulations, you found %s!\n%s was in this(these) movie(s):\n", target_person->name,target_person->name);
       
       //print all the movies they have been in
       for(int i=0; i<llist_size(target_person->movies)&&head!=NULL; i++, head=head->next){
       	printf("%s\n", head->data->name);  
       }
+      
+      printf("Would you like to go again? If so, please type in another actor's/actress' name. Otherwise, type 'q' or press ENTER to exit.\n"); 
        
     }
     else{
-      printf("I am sorry, %s was not found.\n",input);  
+      printf("I am sorry, %s was not found.\n",input);
+      printf("If you like to try again, please type in another actor's/actress' name. Otherwise, type 'q' or press ENTER to exit.\n"); 
     }
   }
 
