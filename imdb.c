@@ -16,8 +16,8 @@
 
 #include "imdb_functions.h"
 
-// the IMDB files contain 239 header lines
-#define HEADER_LINES 239
+// the IMDB files contain at most 241 header lines
+#define HEADER_LINES 241
 
 // Discards all characters until the end of a line in the given file
 void skip_line(FILE* file)
