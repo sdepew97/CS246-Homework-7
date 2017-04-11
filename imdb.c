@@ -19,13 +19,6 @@
 // the IMDB files contain at most 241 header lines
 #define HEADER_LINES 241
 
-// Discards all characters until the end of a line in the given file
-void skip_line(FILE* file)
-{
-  while(!feof(file) && getc(file) != '\n')
-    ;
-}
-
 // Reads in a file containing a list of cast members
 // preconditions: all_movies exists and maps all movies encountered so far
 // postconditions: If the file can be read successfully, returns an array

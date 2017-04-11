@@ -7,11 +7,19 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "imdb_functions.h"
 
 #define STRING_SIZE  200
 #define LEN "199"
+
+// Discards all characters until the end of a line in the given file
+void skip_line(FILE* file)
+{
+  while(!feof(file) && getc(file) != '\n')
+    ;
+}
 
 // copy the given string into a newly-malloc'd buffer
 char* malloc_string(char* str)
@@ -19,6 +27,22 @@ char* malloc_string(char* str)
   char* new = malloc(sizeof(char) * (strlen(str)+1));
   strcpy(new, str);
   return new;
+}
+
+// like strcmp, but ignores differences in case (why does this work?)
+int stricmp(char* s1, char* s2)
+{
+  while(true)
+  {
+    char c1 = *s1++;
+    char c2 = *s2++;
+    int d = toupper(c1) - toupper(c2);
+
+    if(d != 0 || !c1)
+    {
+      return d;
+    }
+  }
 }
 
 // is the given string composed entirely of dashes?
@@ -32,6 +56,20 @@ bool all_dashes(char* str)
     }
   }
   return true;
+}
+
+// are there any non-ascii characters in the string?
+bool any_bad_chars(char* str)
+{
+  while(*str)
+  {
+    char c = *str++;
+    if(c < 0)
+    {
+      return true;
+    }
+  }
+  return false;
 }
 
 // Reads in a cast member from the given file
@@ -50,13 +88,16 @@ read_result read_cast_member(FILE* file, cast_member* member, map all_movies)
 
   if(all_dashes(buf)) return END_OF_LIST;
 
+  // non-ascii chars are alphabetized differently, so we can't handle them here
+  if(any_bad_chars(buf)) return FAILURE;
+
   // WRITE CODE HERE
   // At this point, `buf` contains the name of the cast member, and you can
   // fill in the two data fields of *member.
 
   while(fscanf(file, "%*[\t]%" LEN "[^\n]", buf) == 1)
   {
-    getc(file); // eat the newline
+    skip_line(file); // eat rest of line
     
     // cut it off at the first instance of 2 spaces
     char* spaces = strstr(buf, "  ");
