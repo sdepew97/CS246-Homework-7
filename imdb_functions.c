@@ -22,6 +22,12 @@ void skip_line(FILE* file)
     ;
 }
 
+//taken from your binary.c file and consumes all characters from stdin, so the program works correctly
+void skip_line_stdin(){
+	while(!feof(stdin) && getchar() != '\n')
+	;
+}
+
 // copy the given string into a newly-malloc'd buffer
 char* malloc_string(char* str)
 {
@@ -140,7 +146,6 @@ read_result read_cast_member(FILE* file, cast_member* member, map all_movies)
     	movie *new_movie = malloc(sizeof(movie));
     	//new_movie->name = buf; 
     	
-    	
     	char *movie_name = malloc(sizeof(char)*(strlen(buf)+1)); 
     	strcpy(movie_name, buf); 
     	new_movie->name = movie_name; 
@@ -173,6 +178,7 @@ array merge_arrays(array src1, array src2)
 {
   //array in which I will store the merged values
   array merged = array_new();
+  
   int index_1=0, index_2=0, index_merged=0; 
 
   while(index_1<array_size(src1) && index_2<array_size(src2)){

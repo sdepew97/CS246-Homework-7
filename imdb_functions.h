@@ -14,6 +14,9 @@
 // Discards all characters until the end of a line in the given file
 void skip_line(FILE* file);
 
+//Clears stdin of the user's choice value
+void skip_line_stdin(); 
+
 // like strcmp, but ignores differences in case
 int stricmp(char* s1, char* s2);
 

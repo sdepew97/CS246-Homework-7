@@ -45,7 +45,9 @@ array read_cast_member_file(char* filename, map all_movies)
 
   array cast = array_new();
  
-  while(!feof(file))
+ int i=0; 
+ //!feof(file)
+  while(i<200)
   {
     cast_member* member = malloc(sizeof(cast_member));
     read_result result = read_cast_member(file, member, all_movies);
@@ -56,18 +58,20 @@ array read_cast_member_file(char* filename, map all_movies)
       array_add(cast, member);
 
       // This is helpful for seeing progress as you're loading a file.
-      if(array_size(cast) % 100000 == 0){
+      if(array_size(cast) % 10 == 0){
         printf("Added cast member %s\n", member->name);
       }
-      
+      i++;
       break;
       
     case FAILURE: 
       skip_line(file); // this makes sure we're always moving forward
+      i++;
       break;
       
     case END_OF_LIST:
       printf("The file is done loading.\n"); 
+      i++; 
       return cast;
     }
   }
@@ -118,54 +122,89 @@ int main(int argc, char** argv)
   }
   
   //print instructions for the user on how to use this program
-  char *instruction_string = "To use this program, please enter the name of an actor/actress in Last, First form. (For example: \"Jolie, Angelina\".)\nThe program will print out a list of all the movies in which the actor/actress has started.\n"; 
+  char *instruction_string = "With this program, you can search for either a movie or an actor/actress. To search for a movie, press 1 and ENTER. To search for an actor/actress, press 2 and ENTER. To end, press any other key and ENTER.\n>>"; 
   printf("%s", instruction_string); 
   
   for(;;)
   {
-    // WRITE CODE HERE
-    // This is the main interactive loop, which you must write, as described
-    // in the assignment.
-    // When the user is done, this should `break`.
+  	char user_choice = getchar(); 
+    if(user_choice=='2'){
+    	//removes the user's choice from stdin 
+    	skip_line_stdin(); 
+    	
+    	printf("To use this program, please enter the name of an actor/actress in Last, First form. (For example: \"Jolie, Angelina\".)\nThe program will print out a list of all the movies in which the actor/actress has started.\n>>"); 
+    	//get input from user 
+    	//create the string that the memory is stored in 
+   		char input[LEN+1] = {}; 
     
-    //get input from user 
-    //create the string that the memory is stored in 
-    char input[LEN+1] = {}; 
+    	//fill input array with length LEN leaving room for a null terminator
+    	fgets(input, LEN, stdin);
     
-    //fill input array with length LEN leaving room for a null terminator
-    fgets(input, LEN, stdin);
+    	//function that takes in an array pointer removes the new line  
+    	replace_new_line(input); 
+    	
+    	printf("Searching...\n"); 
     
-    //function that takes in an array pointer removes the new line  
-    replace_new_line(input); 
+  	  //look up cast member 
+      cast_member *target_person = find_cast_member(all_cast, input);
     
-    //The user did not enter anything (just a newline) or entered q, so they are done with the program. 
-    if(input[0]=='\0'||input[0]=='q'){
-    	break;
-    } 
-    
-    printf("Searching...\n"); 
-    
-    //look up cast member 
-    cast_member *target_person = find_cast_member(all_cast, input);
-    
-    //if this person is in the list, then return movies that they were in
-    if(target_person!=NULL){
-      //get the head of the llist of movies for the person found
-      llist_node *head = llist_head(target_person->movies);
+      //if this person is in the list, then return movies that they were in
+      if(target_person!=NULL){
+        //get the head of the llist of movies for the person found
+        llist_node *head = llist_head(target_person->movies);
       
-      printf("Congratulations, you found %s!\n%s was in this(these) movie(s):\n", target_person->name,target_person->name);
+        printf("Congratulations, you found %s!\n%s was in this(these) movie(s):\n", target_person->name,target_person->name);
       
-      //print all the movies they have been in
-      for(int i=0; i<llist_size(target_person->movies)&&head!=NULL; i++, head=head->next){
-      	printf("%s\n", head->data->name);  
-      }
+        //print all the movies they have been in
+        for(int i=0; i<llist_size(target_person->movies)&&head!=NULL; i++, head=head->next){
+    	  printf("%s\n", head->data->name);  
+        }
       
-      printf("Would you like to go again? If so, please type in another actor's/actress' name. Otherwise, type 'q' or press ENTER to exit.\n"); 
+        printf("Would you like to go again? If so, please type in 1 to search for another movie name or 2 to search for another actor/actress. Otherwise, type 'q' or press ENTER to exit.\n>>"); 
+       }
        
-    }
     else{
       printf("I am sorry, %s was not found.\n",input);
-      printf("If you like to try again, please type in another actor's/actress' name. Otherwise, type 'q' or press ENTER to exit.\n"); 
+      printf("If you like to try again, please type in 1 to search for another movie name or 2 to search for another actor/actress. Otherwise, type 'q' or press ENTER to exit.\n>>"); 
+    }
+  }
+  
+    //search for a movie
+    else if(user_choice=='1'){
+    	//removes the user's choice from stdin 
+    	skip_line_stdin(); 
+    	
+    	printf("To use this program, please enter the name of an a movie for which you would like to search. (For example: \"The Hunger Games\".)\nThe program will print out a list of all the actors/actresses who started in this movie.\n>>");
+        //get input from user 
+    	//create the string that the memory is stored in 
+   		char input[LEN+1] = {}; 
+    
+    	//fill input array with length LEN leaving room for a null terminator
+    	fgets(input, LEN, stdin);
+    
+    	//function that takes in an array pointer removes the new line  
+    	replace_new_line(input); 
+    	
+    	printf("Searching...\n"); 
+    	
+    	//see if the map contains the movie
+		bool contains = map_contains(all_movies, input);
+		
+		if(contains){
+			printf("Congratulations! %s was in the map.\n", input); 
+        	printf("Would you like to go again? If so, please type in 1 to search for another movie name or 2 to search for another actor/actress. Otherwise, type 'q' or press ENTER to exit.\n>>"); 
+		}
+		
+    	else{
+      		printf("I am sorry, %s was not found.\n",input);
+      		printf("If you like to try again, please type in 1 to search for another movie name or 2 to search for another actor/actress. Otherwise, type 'q' or press ENTER to exit.\n>>"); 
+    	}
+    }
+    
+    //The user wants to exit the program they can enter anything else
+    else{
+      printf("Thank you. Goodbye.\n"); 
+      break; 
     }
   }
 
