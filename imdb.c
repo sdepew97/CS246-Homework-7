@@ -111,14 +111,19 @@ int main(int argc, char** argv)
 
     if(!some_cast)
     {
-       // file reading failed, but read_cast_member_file alerted the user already
+       // file reading failed, but read_cast_member_file alerted the user already however the memory still needs to be freed
       array_free(some_cast); 
       continue;
     }
     
+    //merged array
     array new_all_cast = merge_arrays(all_cast, some_cast); 
+    
+    //free all cast and some cast, since these arrays and their memories are no longer needed
     array_free(all_cast);        
     array_free(some_cast);
+    
+    //set all cast to new all cast
     all_cast = new_all_cast;  
   }
   
@@ -263,7 +268,6 @@ int main(int argc, char** argv)
   	free(current->name); 
   	
   	//free the llist of movies for a cast member
-  	llist_node *head = llist_head(current->movies); 
   	llist_free(current->movies);
   	
   	//free the cast member
