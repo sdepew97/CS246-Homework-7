@@ -59,10 +59,12 @@ array read_cast_member_file(char* filename, map all_movies)
       
       break;
     case FAILURE:
+      free(member);
       skip_line(file); // this makes sure we're always moving forward
       break;
       
     case END_OF_LIST:
+      free(member);
       return cast;
     }
   }
