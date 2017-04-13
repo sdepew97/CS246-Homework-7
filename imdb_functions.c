@@ -1,7 +1,7 @@
 /* imdb_functions.c
 
    Name: Sarah Depew
-   Resources used (websites / peers / etc): https://en.wikipedia.org/wiki/Binary_search_algorithm, TA Rachel, Ruby
+   Resources used (websites / peers / etc): https://en.wikipedia.org/wiki/Binary_search_algorithm, TA Rachel, Ruby, Professor 
 */
 
 #include <stdlib.h>
@@ -126,7 +126,8 @@ read_result read_cast_member(FILE* file, cast_member* member, map all_movies)
     movie *current_movie; 
     
     //the movie is not yet contained in the map
-    if(movie_in_map == false){
+    if(movie_in_map == false)
+    {
       	//create the movie and fill the fields
     	movie *new_movie = malloc(sizeof(movie));
     	
@@ -141,7 +142,9 @@ read_result read_cast_member(FILE* file, cast_member* member, map all_movies)
     	
     }
     
-    else{
+    else
+    {
+        //the movie exists, so we need to get it from the map
     	current_movie = map_get(all_movies, buf);
     }
     
@@ -167,16 +170,19 @@ array merge_arrays(array src1, array src2)
   
   int index_1=0, index_2=0, index_merged=0; 
 
-  while(index_1<array_size(src1) && index_2<array_size(src2)){
+  while(index_1<array_size(src1) && index_2<array_size(src2))
+  {
     //first element is smaller than second element, first element into merged array
-    if(stricmp((array_get(src1,index_1)->name),(array_get(src2,index_2)->name))<0){ 
+    if(stricmp((array_get(src1,index_1)->name),(array_get(src2,index_2)->name))<0)
+    { 
       array_add_at(merged,index_merged,array_get(src1,index_1));
       index_1++;
       index_merged++; 
     }
     
     //elements are either equal or second is greater than first, put second in merged array
-    else{  
+    else
+    {  
       array_add_at(merged,index_merged,array_get(src2,index_2));
       index_2++;
       index_merged++; 
@@ -184,21 +190,26 @@ array merge_arrays(array src1, array src2)
   }
 
   //there are still (sorted) elements in the first array that should all be transfered to merged
-  if(index_1<array_size(src1)){
-    for(;index_1<array_size(src1);index_1++,index_merged++){
+  if(index_1<array_size(src1))
+  {
+    for(;index_1<array_size(src1);index_1++,index_merged++)
+    {
       array_add_at(merged,index_merged,array_get(src1,index_1));
     }
   }
 
   //there are still (sorted) elements in the second array that should all be transfered to merged
-  if(index_2<array_size(src2)){
-    for(;index_2<array_size(src2);index_2++,index_merged++){
+  if(index_2<array_size(src2))
+  {
+    for(;index_2<array_size(src2);index_2++,index_merged++)
+    {
       array_add_at(merged,index_merged,array_get(src2,index_2));
     }
   }
   
   else{} //do nothing, since merged is filled and input arrays were both the same size
   
+  //return a copy of the merged array 
   return merged; 
 }
 
@@ -209,21 +220,32 @@ array merge_arrays(array src1, array src2)
 //                 Otherwise, returns NULL.
 cast_member* find_cast_member(array cast, char* name)
 {
+  //the int markers for where we are in an array
   int low=0, high=array_size(cast)-1, midpoint;
   
-  while(low<=high){
-    midpoint=(low+high)/2; 
-     if(stricmp((array_get(cast,midpoint)->name),name)==0){
+  //while low<=high, since we want to check even if they are equal since the element could be at this location
+  while(low<=high)
+  {
+    //reset the midpoint's value each iteration 
+    midpoint=(low+high)/2;
+     //check to see if the key is less than, greater than, or equal to that of the current string 
+     
+     //if equal, then the element has been found 
+     if(stricmp((array_get(cast,midpoint)->name),name)==0)
+     {
       return array_get(cast,midpoint); 
     }
-
-    else if(stricmp((array_get(cast,midpoint)->name),name)<0){
+    //if less than, then the element will be located above where we are currently searching 
+    else if(stricmp((array_get(cast,midpoint)->name),name)<0)
+    {
       low=midpoint+1; 
     }
-    else{
+    //otherwise, look below where we are currently searching
+    else
+    {
       high=midpoint-1; 
     } 
   }
-  
+  //the element was not found
   return NULL; 
 }

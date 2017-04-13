@@ -81,7 +81,8 @@ array read_cast_member_file(char* filename, map all_movies)
   return cast; // shouldn't get here unless file is truncated
 }
 
-void replace_new_line(char *input){
+void replace_new_line(char *input)
+{
 	int i=0; 
 	
 	while(input[i]!='\n'){
@@ -129,7 +130,8 @@ int main(int argc, char** argv)
   for(;;)
   {
   	char user_choice = getchar(); 
-    if(user_choice=='2'){
+    if(user_choice=='2')
+    {
     	//removes the user's choice from stdin 
     	skip_line_stdin(); 
     	
@@ -150,7 +152,8 @@ int main(int argc, char** argv)
       cast_member *target_person = find_cast_member(all_cast, input);
     
       //if this person is in the list, then return movies that they were in
-      if(target_person!=NULL){
+      if(target_person!=NULL)
+      {
         //get the head of the llist of movies for the person found
         llist_node *head = llist_head(target_person->movies);
       
@@ -164,14 +167,16 @@ int main(int argc, char** argv)
         printf("Would you like to go again? If so, please type in 1 to search for another movie name or 2 to search for another actor/actress. Otherwise, type 'q' or press ENTER to exit.\n>>"); 
        }
        
-    else{
+    else
+    {
       printf("I am sorry, %s was not found.\n",input);
       printf("If you like to try again, please type in 1 to search for another movie name or 2 to search for another actor/actress. Otherwise, type 'q' or press ENTER to exit.\n>>"); 
     }
   }
   
     //search for a movie
-    else if(user_choice=='1'){
+    else if(user_choice=='1')
+    {
     	//removes the user's choice from stdin 
     	skip_line_stdin(); 
     	
@@ -191,33 +196,38 @@ int main(int argc, char** argv)
     	//see if the map contains the movie
 		bool contains = map_contains(all_movies, input);
 		
-		if(contains){
+		if(contains)
+		{
 			printf("Congratulations! %s was in the map.\nThese people were in this movie:\n", input); 
 			
 			movie* movie_input = map_get(all_movies, input);
 			int cast_array_size = array_size(movie_input->cast); 
 			
 			//print out the cast member's names
-			for(int i=0; i<cast_array_size; i++){
+			for(int i=0; i<cast_array_size; i++)
+			{
 				printf("%s\n", array_get(movie_input->cast, i)->name); 
 			}
 			
         	printf("Would you like to go again? If so, please type in 1 to search for another movie name or 2 to search for another actor/actress. Otherwise, type 'q' or press ENTER to exit.\n>>"); 
 		}
 		
-    	else{
+    	else
+    	{
       		printf("I am sorry, %s was not found.\n",input);
       		printf("If you like to try again, please type in 1 to search for another movie name or 2 to search for another actor/actress. Otherwise, type 'q' or press ENTER to exit.\n>>"); 
     	}
     }
     
     //The user wants to exit the program they can enter anything else
-    else if(user_choice=='q'||user_choice=='\n'){
+    else if(user_choice=='q'||user_choice=='\n')
+    {
       printf("Thank you. Goodbye.\n"); 
       break; 
     }
     //do nothing and loop, again
-    else{
+    else
+    {
     	printf("I am sorry, the input was invalid.\n");
     	skip_line_stdin();
     	printf("If you like to try again, please type in 1 to search for another movie name or 2 to search for another actor/actress. Otherwise, type 'q' or press ENTER to exit.\n>>"); 
@@ -226,14 +236,14 @@ int main(int argc, char** argv)
   
   // Free all used memory before exiting.  
   
-  //Free the movies
+  //Free the movies using the map
   int size_map = map_size(all_movies); 
-  printf("%d\n", size_map); 
-  //map_entry movies_in_map[size_map]; 
   map_entry *movies_in_map = malloc(sizeof(map_entry)*size_map); 
+  
   map_get_entries(all_movies, movies_in_map); 
   
-  for(int i=0; i<size_map; i++){
+  for(int i=0; i<size_map; i++)
+  {
   	free(movies_in_map[i].value->name); 
   	array_free(movies_in_map[i].value->cast);
   	free(movies_in_map[i].value); 
@@ -247,7 +257,8 @@ int main(int argc, char** argv)
   //size of the array
   int size = array_size(all_cast); 
   
-  for(int i=0; i<size; i++){
+  for(int i=0; i<size; i++)
+  {
   	cast_member *current = array_get(all_cast, i); 
   	free(current->name); 
   	
