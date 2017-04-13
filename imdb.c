@@ -64,15 +64,13 @@ array read_cast_member_file(char* filename, map all_movies)
  		i++;
       break;
       
-    case FAILURE: 
+    case FAILURE:
       skip_line(file); // this makes sure we're always moving forward
-		i++;
       free(member);
       break;
       
     case END_OF_LIST:
-      printf("The file is done loading.\n"); 
-		i++; 
+      printf("The file is done loading.\n");  
       free(member);  
       return cast;
     }
