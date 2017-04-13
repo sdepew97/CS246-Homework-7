@@ -1,7 +1,7 @@
 /* imdb_functions.c
 
    Name: Sarah Depew
-   Resources used (websites / peers / etc): https://en.wikipedia.org/wiki/Binary_search_algorithm, TA
+   Resources used (websites / peers / etc): https://en.wikipedia.org/wiki/Binary_search_algorithm, TA Rachel, Ruby
 */
 
 #include <stdlib.h>
@@ -105,13 +105,6 @@ read_result read_cast_member(FILE* file, cast_member* member, map all_movies)
   // non-ascii chars are alphabetized differently, so we can't handle them here
   if(any_bad_chars(buf)) return FAILURE;
 
-  // WRITE CODE HERE
-  // At this point, `buf` contains the name of the cast member, and you can
-  // fill in the two data fields of *member. 
-  
-  //member->name = buf; //fills the name part of the cast member struct
-  //strcpy(member->name, buf); 
-  
   //fills the name and movie list part of the cast member struct
   member->name = malloc_string(buf); 
   member->movies = llist_new(); //creates an empty llist to fill with movies 
@@ -128,13 +121,6 @@ read_result read_cast_member(FILE* file, cast_member* member, map all_movies)
       *spaces = '\0'; // cut off the string here
     }
 
-    // WRITE CODE HERE
-    // At this point, `buf` contains the name of the movie. You should:
-    //   1. Look up the movie in all_movies to see if it already exists.
-    //   2. If not, create (malloc) a new movie object and add it to the map.
-    //   3. Update the movie to include the cast member.
-    //   4. Update the cast member to include the movie.
-    
     //Look up movie to see if it already exists
     bool movie_in_map = map_contains(all_movies, buf);
     movie *current_movie; 
