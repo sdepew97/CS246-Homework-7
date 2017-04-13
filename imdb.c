@@ -3,7 +3,7 @@
    Main program for interactive IMDB viewer.
 
    Name: Sarah Depew
-   Resources used (websites / peers / etc): https://www.cyberciti.biz/faq/linux-unix-vim-save-and-quit-command/, http://stackoverflow.com/questions/2481879/ignore-extra-spaces-when-using-fgets, http://www.cplusplus.com/reference/cstring/strcmp/, TA, Ruby
+   Resources used (websites / peers / etc): https://www.cyberciti.biz/faq/linux-unix-vim-save-and-quit-command/, http://stackoverflow.com/questions/2481879/ignore-extra-spaces-when-using-fgets, http://www.cplusplus.com/reference/cstring/strcmp/, TA, Ruby, http://www.ascii-code.com
 */
 
 #include <stdlib.h>
@@ -45,9 +45,9 @@ array read_cast_member_file(char* filename, map all_movies)
 
   array cast = array_new();
  
- int i=0; 
- //!feof(file)i<200
-  while(i<200)
+  int i=0; 
+  //!feof(file)
+  while(!feof(file))
   {
     cast_member* member = malloc(sizeof(cast_member));
     read_result result = read_cast_member(file, member, all_movies);
@@ -61,18 +61,18 @@ array read_cast_member_file(char* filename, map all_movies)
       if(array_size(cast) % 1000 == 0){
         printf("Added cast member %s\n", member->name);
       }
-      i++;
+ 		i++;
       break;
       
     case FAILURE: 
       skip_line(file); // this makes sure we're always moving forward
-      i++;
+		i++;
       free(member);
       break;
       
     case END_OF_LIST:
       printf("The file is done loading.\n"); 
-      i++;
+		i++; 
       free(member);  
       return cast;
     }
@@ -218,7 +218,8 @@ int main(int argc, char** argv)
     }
     //do nothing and loop, again
     else{
-    	printf("I am sorry, the input was invalid.\n"); 
+    	printf("I am sorry, the input was invalid.\n");
+    	skip_line_stdin();
     	printf("If you like to try again, please type in 1 to search for another movie name or 2 to search for another actor/actress. Otherwise, type 'q' or press ENTER to exit.\n>>"); 
     }
   }
@@ -227,18 +228,22 @@ int main(int argc, char** argv)
   
   //Free the movies
   int size_map = map_size(all_movies); 
-  map_entry movies_in_map[size_map]; 
-  map_get_entries(all_movies, movies_in_map);
-  
+  printf("%d\n", size_map); 
+  //map_entry movies_in_map[size_map]; 
+  map_entry *movies_in_map = malloc(sizeof(map_entry)*size_map); 
+  map_get_entries(all_movies, movies_in_map); 
   
   for(int i=0; i<size_map; i++){
   	free(movies_in_map[i].value->name); 
   	array_free(movies_in_map[i].value->cast);
+  	free(movies_in_map[i].value); 
   }
   
   //Free the map
+  free(movies_in_map);
   map_free(all_movies); 
   
+  //free the cast members
   //size of the array
   int size = array_size(all_cast); 
   
@@ -246,45 +251,8 @@ int main(int argc, char** argv)
   	cast_member *current = array_get(all_cast, i); 
   	free(current->name); 
   	
-  	
-  	//size of the list in the current cast member 
-  	int l_size = llist_size(current->movies); 
-  	llist_node *head = llist_head(current->movies); 
-  	
-  	/*
-  	//there are errors with how I am freeing this memory!!
-  	//free every movie including the name and the cast array
-  	for(int j=0; j<l_size && head!=NULL; j++, head=head->next){
-  	 
-  	
-  		if(head->data->name){
-  			free(head->data->name); 
-  			head->data->name = NULL; 
-  		}
-  		else if(head->data->cast){
-  			array_free(head->data->cast);
-  			head->data->cast = NULL; 
-  		}
-  		else{
-  			free(head->data->name); 
-  			head->data->name = NULL; 
-  			array_free(head->data->cast);
-  			head->data->cast = NULL; 
-  		}
-  		
-  		
-  		//now, I am trying to free memory twice...
-  		if(head->data){
-  		free(head->data->name); 
-  		array_free(head->data->cast);
-  		free(head->data); 
-  		head->data = NULL; 
-  		}
-  		
-  	}
-  	*/
-  	
   	//free the llist of movies for a cast member
+  	llist_node *head = llist_head(current->movies); 
   	llist_free(current->movies);
   	
   	//free the cast member
