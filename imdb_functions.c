@@ -113,9 +113,7 @@ read_result read_cast_member(FILE* file, cast_member* member, map all_movies)
   //strcpy(member->name, buf); 
   
   //fills the name and movie list part of the cast member struct
-  char *name = malloc(sizeof(char)*(strlen(buf)+1)); 
-  strcpy(name, buf); 
-  member->name = name; 
+  member->name = malloc_string(buf); 
   member->movies = llist_new(); //creates an empty llist to fill with movies 
   
   //start reading in all the movies
@@ -138,25 +136,27 @@ read_result read_cast_member(FILE* file, cast_member* member, map all_movies)
     //   4. Update the cast member to include the movie.
     
     //Look up movie to see if it already exists
-    movie *current_movie = map_get(all_movies, buf);
+    bool movie_in_map = map_contains(all_movies, buf);
+    movie *current_movie; 
     
     //the movie is not yet contained in the map
-    if(current_movie == NULL){
+    if(movie_in_map == false){
       	//create the movie and fill the fields
     	movie *new_movie = malloc(sizeof(movie));
-    	//new_movie->name = buf; 
     	
-    	char *movie_name = malloc(sizeof(char)*(strlen(buf)+1)); 
-    	strcpy(movie_name, buf); 
-    	new_movie->name = movie_name; 
-    	 
+    	new_movie->name = malloc_string(buf); 
     	new_movie->cast = array_new(); 
     	 
     	//add it to the map
     	map_put(all_movies, buf, new_movie);
-    	
+    
     	//update current_movie
-    	current_movie = new_movie; 
+    	current_movie = new_movie;
+    	
+    }
+    
+    else{
+    	current_movie = map_get(all_movies, buf);
     }
     
     //Update the movie to contain the cast member

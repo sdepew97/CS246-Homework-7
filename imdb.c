@@ -100,7 +100,7 @@ int main(int argc, char** argv)
   
   map all_movies = map_new();
   array all_cast = array_new();
-
+  
   // start i at one to skip program name
   for(int i = 1; i < argc; i++)
   {
@@ -111,14 +111,11 @@ int main(int argc, char** argv)
        // file reading failed, but read_cast_member_file alerted the user already
       continue;
     }
-
-    // WRITE CODE HERE
-    // At this point, some_cast has the cast members most recently read in,
-    // and all_cast has all previous cast members.
-    // You need to merge (with a call to merge_arrays) these two arrays, producing
-    // a new all_cast that contains both.
     
-    all_cast = merge_arrays(all_cast, some_cast); 
+    array new_all_cast = merge_arrays(all_cast, some_cast); 
+    array_free(all_cast);        
+    array_free(some_cast);
+    all_cast = new_all_cast;  
   }
   
   //print instructions for the user on how to use this program
@@ -210,6 +207,47 @@ int main(int argc, char** argv)
 
   // WRITE CODE HERE
   // Free all used memory before exiting.
+  
+  map_free(all_movies); 
+  
+  //size of the array
+  int size = array_size(all_cast); 
+  
+  for(int i=0; i<size; i++){
+  	cast_member *current = array_get(all_cast, i); 
+  	free(current->name); 
+  	
+  	//size of the list in the current cast member 
+  	int l_size = llist_size(current->movies); 
+  	llist_node *head = llist_head(current->movies); 
+  	
+  	//free every movie including the name and the cast array
+  	for(int j=0; j<l_size && head!=NULL; j++, head=head->next){
+  		if(head->data->name){
+  			free(head->data->name); 
+  			head->data->name = NULL; 
+  		}
+  		else if(head->data->cast){
+  			array_free(head->data->cast);
+  			head->data->cast = NULL; 
+  		}
+  		else{
+  			free(head->data->name); 
+  			head->data->name = NULL; 
+  			array_free(head->data->cast);
+  			head->data->cast = NULL; 
+  		}
+  	}
+  	
+  	//free the llist of movies for a cast member
+  	llist_free(current->movies);
+  	
+  	//free the cast member
+  	free(current);  	
+  }
+  
+  //free the array of cast members
+  array_free(all_cast); 
   
   return 0;
 }
